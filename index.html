@@ -874,10 +874,91 @@ button:disabled { cursor: default; opacity: .45; }
   // ---------- online leaderboard (shared db) ----------
   let db = null, myId = null, canWrite = true, boardRows = [], boardTab = 'explorer', boardState = 'loading';
   let sending = false, sendAgain = false, lastSent = '';
+
+  // ---------- Supabase: the public leaderboard when the game runs on its own website ----------
+  // The publishable key is meant to be public; the database's own rules decide what it may do.
+  const SB_URL = 'https://vcvmmedfoxkmbubjqjcp.supabase.co';
+  const SB_KEY = 'sb_publishable__U6DbnFvUBjRrlWaU0S5Xg_cHb5sPrb';
+  let backend = null; // 'claude' or 'supabase'
+  const sb = {
+    session: store.get('sb', null),
+    async call(path, opts = {}, auth = false) {
+      const headers = Object.assign({ apikey: SB_KEY, 'Content-Type': 'application/json' }, opts.headers || {});
+      if (auth) headers.Authorization = 'Bearer ' + (await sb.token());
+      const ctl = new AbortController(), tm = setTimeout(() => ctl.abort(), 10000);
+      try {
+        const r = await fetch(SB_URL + path, Object.assign({}, opts, { headers, signal: ctl.signal }));
+        if (!r.ok) { const e = new Error('HTTP ' + r.status); e.status = r.status; throw e; }
+        const text = await r.text();
+        return text ? JSON.parse(text) : null;
+      } finally { clearTimeout(tm); }
+    },
+    // each browser gets an anonymous player id, created only when it first saves a score
+    async token() {
+      const now = Date.now() / 1000;
+      let s = sb.session;
+      if (s && s.access_token && s.expires_at - 60 > now) return s.access_token;
+      let fresh = null;
+      if (s && s.refresh_token) {
+        try { fresh = await sb.call('/auth/v1/token?grant_type=refresh_token', { method: 'POST', body: JSON.stringify({ refresh_token: s.refresh_token }) }); }
+        catch (e) { fresh = null; }
+      }
+      if (!fresh) fresh = await sb.call('/auth/v1/signup', { method: 'POST', body: '{}' });
+      sb.session = {
+        access_token: fresh.access_token, refresh_token: fresh.refresh_token,
+        expires_at: fresh.expires_at || (now + (fresh.expires_in || 3600)), uid: fresh.user && fresh.user.id
+      };
+      store.set('sb', sb.session);
+      return sb.session.access_token;
+    }
+  };
+  async function loadBoardSb() {
+    if (backend !== 'supabase') return;
+    try {
+      const sel = '/rest/v1/scores?select=id,nick,explorer,challenge,far';
+      const [a, b] = await Promise.all([
+        sb.call(sel + '&explorer=gt.0&order=explorer.desc&limit=25'),
+        sb.call(sel + '&challenge=gt.0&order=challenge.desc&limit=25')
+      ]);
+      const rows = new Map();
+      for (const v of [...(a || []), ...(b || [])]) {
+        rows.set(v.id, { id: v.id, nick: String(v.nick || 'Explorer').slice(0, 24), explorer: num(v.explorer), challenge: num(v.challenge), far: num(v.far) });
+      }
+      boardRows = [...rows.values()];
+      boardState = 'ready';
+    } catch (e) { boardState = 'error'; }
+    renderBoard();
+  }
+  async function submitScoreSb() {
+    if (/[?&]selftest\b/.test(location.search)) return; // automated tests never post to the real board
+    if (sending) { sendAgain = true; return; }
+    if (!best.explorer && !best.challenge) return;
+    const body = { nick, explorer: Math.min(5000, best.explorer), challenge: Math.min(5000, best.challenge), far: Math.min(5000, farthest) };
+    const key = JSON.stringify(body);
+    if (key === lastSent) return;
+    sending = true;
+    try {
+      await sb.token();
+      myId = sb.session.uid;
+      await sb.call('/rest/v1/scores?on_conflict=id', {
+        method: 'POST', headers: { Prefer: 'resolution=merge-duplicates,return=minimal' },
+        body: JSON.stringify(Object.assign({ id: myId }, body))
+      }, true);
+      lastSent = key;
+      await loadBoardSb();
+    } catch (e) { /* offline or refused: the score stays saved on this device and is sent next round */ }
+    sending = false;
+    if (sendAgain) { sendAgain = false; submitScoreSb(); }
+  }
   // Scores are written by players' browsers, so ignore anything impossible.
   const num = v => (typeof v === 'number' && isFinite(v) && v >= 0 && v <= 5000) ? Math.floor(v) : 0;
   async function initOnline() {
-    if (!window.claude || typeof window.claude.use !== 'function') { boardState = 'off'; renderBoard(); return; }
+    if (!window.claude || typeof window.claude.use !== 'function') {
+      backend = 'supabase'; canWrite = true; myId = sb.session && sb.session.uid;
+      await loadBoardSb();
+      return;
+    }
+    backend = 'claude';
     try {
       const [d, u] = await Promise.all([window.claude.use('db'), window.claude.use('user')]);
       if (!d) { boardState = 'off'; renderBoard(); return; }
@@ -894,6 +975,7 @@ button:disabled { cursor: default; opacity: .45; }
     } catch (e) { boardState = 'off'; renderBoard(); }
   }
   async function submitScore() {
+    if (backend === 'supabase') return submitScoreSb();
     if (!db || !myId || !canWrite) return;
     if (sending) { sendAgain = true; return; }
     const mine = boardRows.find(r => r.id === myId) || {};
@@ -1021,8 +1103,8 @@ button:disabled { cursor: default; opacity: .45; }
 
   $('logBtnMenu').addEventListener('click', e => { e.stopPropagation(); openLog('menu'); });
   $('logClose').addEventListener('click', e => { e.stopPropagation(); hush(); back(); });
-  $('boardBtnMenu').addEventListener('click', e => { e.stopPropagation(); renderBoard(); openFrom('board', 'menu'); });
-  $('boardBtnOver').addEventListener('click', e => { e.stopPropagation(); renderBoard(); openFrom('board', 'over'); });
+  $('boardBtnMenu').addEventListener('click', e => { e.stopPropagation(); renderBoard(); loadBoardSb(); openFrom('board', 'menu'); });
+  $('boardBtnOver').addEventListener('click', e => { e.stopPropagation(); renderBoard(); loadBoardSb(); openFrom('board', 'over'); });
   $('boardClose').addEventListener('click', e => { e.stopPropagation(); back(); });
   $('missionsBtn').addEventListener('click', e => { e.stopPropagation(); renderMissions(); openFrom('missions', 'menu'); });
   $('missionsClose').addEventListener('click', e => { e.stopPropagation(); back(); });
