@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Starlight Privacy</title>
+<style>
+  :root { --bg: #0a0a1f; --fg: #f6f1ff; --muted: #a7a0cf; --accent: #ffd27a; color-scheme: dark; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 "Segoe UI", system-ui, sans-serif; }
+  main { max-width: 680px; margin: 0 auto; padding: 32px max(16px, env(safe-area-inset-right, 0px)) 48px max(16px, env(safe-area-inset-left, 0px)); }
+  h1 { color: var(--accent); font-size: 2rem; margin: 0 0 4px; }
+  h2 { font-size: 1.15rem; margin: 28px 0 6px; }
+  p, li { color: var(--fg); }
+  .muted { color: var(--muted); }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Starlight privacy</h1>
+  <p class="muted">Last updated: 22 November 2026</p>
+
+  <p>Starlight is a free space game for children. We collect as little as possible, and we never sell or share it.</p>
+
+  <h2>What children share</h2>
+  <p>Nothing personal. Children play without an account. On the Top scores board a player appears only under a nickname built from the game's own word lists, such as "Happy Otter 37". Children cannot type their own name or any other text.</p>
+
+  <h2>What we store for every player</h2>
+  <ul>
+    <li>A random player ID created by the game, so a player's best score can be saved.</li>
+    <li>That player's nickname, best scores and farthest world reached, shown on the public Top scores board.</li>
+    <li>Game progress (discoveries, stardust, outfits), kept in the browser on the player's own device.</li>
+  </ul>
+
+  <h2>If a grown-up signs in to save progress</h2>
+  <p>A parent or carer can choose to sign in with an email code or a Google account so progress can continue on another device. In that case we also store:</p>
+  <ul>
+    <li>The grown-up's email address, used only to sign in. It is never shown in the game or on the board.</li>
+    <li>A copy of the game progress, which only that account can read.</li>
+  </ul>
+
+  <h2>Who processes the data</h2>
+  <p>Scores and accounts are stored with Supabase, our database provider. Google sign-in is handled by Google. The game itself is hosted on GitHub Pages. We do not use advertising or tracking cookies.</p>
+
+  <h2>Removing data</h2>
+  <p>To remove a player's score or a signed-in account and its saved progress, open an issue at <a href="https://github.com/bilzz1326/starlight/issues">github.com/bilzz1326/starlight/issues</a> asking for removal, without posting any personal details there, and we will follow up. Clearing the browser's site data removes the progress kept on that device.</p>
+
+  <p><a href="./">Back to the game</a></p>
+</main>
+</body>
+</html>

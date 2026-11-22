@@ -223,6 +223,31 @@ button:disabled { cursor: default; opacity: .45; }
 .board-me { display: flex; justify-content: space-between; gap: 10px; align-items: center; flex-wrap: wrap; color: var(--muted); font-weight: 700; font-size: .9rem; }
 .board-me b { color: var(--ink); }
 .note { font-size: .85rem; color: var(--muted); }
+/* accounts and nickname picker */
+input { -webkit-user-select: text; user-select: text; }
+.field {
+  width: 100%; box-sizing: border-box; font: 700 1.1rem var(--font-body); color: var(--ink);
+  background: rgba(255,255,255,.08); border: 2px solid rgba(255,255,255,.2); border-radius: 12px; padding: 12px 14px;
+}
+.field:focus { outline: none; border-color: var(--spark); }
+.field.code { text-align: center; letter-spacing: .4em; font-family: var(--font-display); font-size: 1.6rem; }
+.google-btn {
+  display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer;
+  background: #ffffff; color: #1f1f1f; border: 0; border-radius: 14px; padding: 13px 16px; font-weight: 800; font-size: 1rem;
+}
+.google-btn svg { width: 20px; height: 20px; }
+.or { color: var(--muted); font-weight: 800; font-size: .8rem; letter-spacing: .14em; text-transform: uppercase; }
+.msg { font-size: .88rem; color: var(--danger); min-height: 1.2em; margin: 0; }
+.msg.ok { color: var(--good); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.chips button {
+  background: rgba(255,255,255,.07); color: var(--ink); border: 2px solid transparent; border-radius: 999px;
+  padding: 7px 11px; font-weight: 800; font-size: .88rem; cursor: pointer;
+}
+.chips button[aria-pressed="true"] { border-color: var(--spark); background: rgba(255,210,122,.16); }
+.nick-preview { font-family: var(--font-display); font-weight: 700; font-size: 1.6rem; color: var(--spark); }
+.panel a { color: var(--spark); }
+
 /* playful motion */
 .menu-panel .logo span { display: inline-block; animation: wave 2.4s ease-in-out infinite; }
 @keyframes wave { 0%, 55%, 100% { transform: translateY(0); } 25% { transform: translateY(-9px) rotate(-4deg); } }
@@ -340,6 +365,11 @@ button:disabled { cursor: default; opacity: .45; }
           <button class="chip" type="button" data-toggle="sound" aria-pressed="true">Sounds</button>
         </div>
       </div>
+      <div class="group">
+        <div class="label">Save progress</div>
+        <p style="font-size:.88rem;text-align:left" id="acctStatus">Progress is saved on this device only.</p>
+        <button class="ghost" id="acctBtn" type="button">Save my progress</button>
+      </div>
       <p style="font-size:.85rem" id="menuStats"></p>
       <button class="cta" id="settingsDone" type="button">Done</button>
     </div>
@@ -406,9 +436,66 @@ button:disabled { cursor: default; opacity: .45; }
         <button type="button" id="boardChallenge" aria-pressed="false">Challenge</button>
       </div>
       <ol class="board-list" id="boardList"></ol>
-      <div class="board-me"><span>Your space name: <b id="nickText"></b></span><button class="chip" id="nickBtn" type="button">New name</button></div>
+      <div class="board-me"><span>Your space name: <b id="nickText"></b></span><button class="chip" id="nickBtn" type="button">Change name</button></div>
       <p class="note" id="boardNote"></p>
       <button class="ghost" id="boardClose" type="button">Close</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="nickPick" hidden>
+    <div class="panel">
+      <div class="title" style="font-size:1.6rem">Pick your space name</div>
+      <div class="nick-preview" id="nickPreview">Happy Otter 37</div>
+      <div class="chips" id="nickA"></div>
+      <div class="chips" id="nickB"></div>
+      <button class="chip" id="nickNum" type="button" style="justify-self:center">New number</button>
+      <button class="cta" id="nickSave" type="button">Use this name</button>
+      <button class="link" id="nickCancel" type="button">Cancel</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="account" hidden>
+    <div class="panel">
+      <div class="title" id="acctTitle">For grown-ups</div>
+
+      <div class="group" id="acctGate">
+        <p>Ask a grown-up to help. What is <b id="gateQ">7 × 6</b>?</p>
+        <label class="label" for="gateA">Answer</label>
+        <input class="field" id="gateA" inputmode="numeric" autocomplete="off" maxlength="3">
+        <p class="msg" id="gateMsg"></p>
+        <button class="cta" id="gateGo" type="button">Continue</button>
+      </div>
+
+      <div class="group" id="acctChoose" hidden>
+        <p>Sign in to keep Lumi's scores, Logbook and outfits safe, and continue on any phone or computer.</p>
+        <button class="google-btn" id="googleBtn" type="button">
+          <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.5l6.7-6.7C35.6 2.4 30.2 0 24 0 14.6 0 6.6 5.4 2.6 13.2l7.8 6.1C12.3 13.6 17.6 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/><path fill="#FBBC05" d="M10.4 28.7c-.5-1.4-.8-3-.8-4.7s.3-3.2.8-4.7l-7.8-6.1C.9 16.5 0 20.1 0 24s.9 7.5 2.6 10.8l7.8-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.8 2.3-8.4 2.3-6.4 0-11.7-4.1-13.6-9.8l-7.8 6.1C6.6 42.6 14.6 48 24 48z"/></svg>
+          Continue with Google
+        </button>
+        <div class="or">or</div>
+        <label class="label" for="acctEmail">Grown-up's email</label>
+        <input class="field" id="acctEmail" type="email" autocomplete="email" placeholder="name@example.com">
+        <button class="cta" id="sendCodeBtn" type="button">Email me a code</button>
+        <p class="msg" id="chooseMsg"></p>
+      </div>
+
+      <div class="group" id="acctCode" hidden>
+        <p>We sent a 6-digit code to <b id="codeEmail"></b>. It can take a minute to arrive. Check spam too.</p>
+        <label class="label" for="acctCodeIn">Code</label>
+        <input class="field code" id="acctCodeIn" inputmode="numeric" maxlength="6" autocomplete="one-time-code">
+        <p class="msg" id="codeMsg"></p>
+        <button class="cta" id="verifyBtn" type="button">Confirm</button>
+        <button class="link" id="codeBack" type="button">Use a different email</button>
+      </div>
+
+      <div class="group" id="acctDone" hidden>
+        <p>Progress is saved to <b id="doneEmail"></b>. Sign in with the same account on another device to continue there.</p>
+        <p class="msg ok" id="doneMsg"></p>
+        <button class="ghost" id="signOutBtn" type="button">Sign out on this device</button>
+      </div>
+
+      <p class="note">The email is only used to sign in. It is never shown in the game. <a href="privacy.html" target="_blank" rel="noopener">Privacy</a></p>
+      <button class="ghost" id="acctClose" type="button">Close</button>
     </div>
   </div>
 
@@ -862,7 +949,7 @@ button:disabled { cursor: default; opacity: .45; }
           e.stopPropagation();
           if (!owned) { if (dust < it.cost) return; dust -= it.cost; closet.owned.push(it.id); fanfare(); }
           else tone(880, 0.12, 'triangle', 0.06);
-          closet[slot] = it.id; save(); renderCloset(); renderMenu();
+          closet[slot] = it.id; save(); renderCloset(); renderMenu(); pushCloud();
         });
         el.appendChild(b);
       }
@@ -901,17 +988,209 @@ button:disabled { cursor: default; opacity: .45; }
       let fresh = null;
       if (s && s.refresh_token) {
         try { fresh = await sb.call('/auth/v1/token?grant_type=refresh_token', { method: 'POST', body: JSON.stringify({ refresh_token: s.refresh_token }) }); }
-        catch (e) { fresh = null; }
+        catch (e) {
+          if (!e.status) throw e;              // offline: try again later, keep who we are
+          if (s.email) { sb.session = null; store.set('sb', null); renderAccount(); } // account sign-in expired
+          fresh = null;
+        }
       }
       if (!fresh) fresh = await sb.call('/auth/v1/signup', { method: 'POST', body: '{}' });
+      sb.setSession(fresh);
+      return sb.session.access_token;
+    },
+    setSession(f) {
+      const now = Date.now() / 1000;
       sb.session = {
-        access_token: fresh.access_token, refresh_token: fresh.refresh_token,
-        expires_at: fresh.expires_at || (now + (fresh.expires_in || 3600)), uid: fresh.user && fresh.user.id
+        access_token: f.access_token, refresh_token: f.refresh_token,
+        expires_at: f.expires_at || (now + (Number(f.expires_in) || 3600)),
+        uid: f.user && f.user.id, email: (f.user && !f.user.is_anonymous && f.user.email) || ''
       };
       store.set('sb', sb.session);
-      return sb.session.access_token;
     }
   };
+  const isAccount = () => !!(sb.session && sb.session.email);
+  const isTest = () => /[?&]selftest\b/.test(location.search);
+
+  // ---------- accounts: save progress and continue on another device ----------
+  const big = v => (typeof v === 'number' && isFinite(v) && v >= 0) ? Math.floor(Math.min(v, 1e7)) : 0;
+  const nickOk = s => typeof s === 'string' && new RegExp(`^(${NICK_A.join('|')}) (${NICK_B.join('|')}) [1-9][0-9]$`).test(s);
+  function progressBlob() {
+    return { v: 1, best, far: farthest, log: [...found], unlocked, dust, closet, streak, nick };
+  }
+  // combine progress from the cloud with this device: keep the best of both
+  function mergeProgress(c) {
+    if (!c || typeof c !== 'object') return;
+    const cb = c.best || {};
+    best = { explorer: Math.max(best.explorer, big(cb.explorer)), challenge: Math.max(best.challenge, big(cb.challenge)) };
+    farthest = Math.max(farthest, big(c.far));
+    if (Array.isArray(c.log)) for (const name of c.log) if (JOURNEY.some(d => d.n === name)) found.add(name);
+    unlocked = Math.min(CHAPTERS.length - 1, Math.max(unlocked, big(c.unlocked)));
+    dust = Math.max(dust, big(c.dust));
+    const items = [...SKINS, ...HATS];
+    if (c.closet && Array.isArray(c.closet.owned)) {
+      for (const id of c.closet.owned) if (items.some(it => it.id === id) && !closet.owned.includes(id)) closet.owned.push(id);
+    }
+    if (c.streak && big(c.streak.n) > streak.n) streak = { n: big(c.streak.n), last: String(c.streak.last || '').slice(0, 12) };
+    if (nickOk(c.nick)) nick = c.nick;
+    save(); renderMenu();
+  }
+  async function pullCloud() {
+    const rows = await sb.call('/rest/v1/saves?select=data&id=eq.' + sb.session.uid, {}, true);
+    return rows && rows[0] ? rows[0].data : null;
+  }
+  async function pushCloud() {
+    if (!isAccount() || isTest()) return;
+    try {
+      await sb.call('/rest/v1/saves?on_conflict=id', {
+        method: 'POST', headers: { Prefer: 'resolution=merge-duplicates,return=minimal' },
+        body: JSON.stringify({ id: sb.session.uid, data: progressBlob(), updated_at: new Date().toISOString() })
+      }, true);
+    } catch (e) {}
+  }
+  async function afterSignIn(fresh, oldGuest) {
+    sb.setSession(fresh);
+    myId = sb.session.uid;
+    // move the guest's leaderboard row into the account
+    if (oldGuest && oldGuest.uid && oldGuest.uid !== myId && oldGuest.access_token) {
+      try { await fetch(SB_URL + '/rest/v1/scores?id=eq.' + oldGuest.uid, { method: 'DELETE', headers: { apikey: SB_KEY, Authorization: 'Bearer ' + oldGuest.access_token } }); } catch (e) {}
+    }
+    try { mergeProgress(await pullCloud()); } catch (e) {}
+    await pushCloud();
+    lastSent = '';
+    await submitScoreSb();
+    renderAccount();
+  }
+  async function guestSnapshot() {
+    if (!sb.session || sb.session.email) return null;
+    try { await sb.token(); } catch (e) {}
+    return sb.session && !sb.session.email ? Object.assign({}, sb.session) : null;
+  }
+  async function googleSignIn() {
+    store.set('oldGuest', await guestSnapshot());
+    const back = location.origin + location.pathname;
+    location.href = SB_URL + '/auth/v1/authorize?provider=google&redirect_to=' + encodeURIComponent(back);
+  }
+  // Google sends the player back here with the sign-in details after the # in the address
+  async function handleOAuthReturn() {
+    const h = location.hash;
+    if (!h || (!h.includes('access_token=') && !h.includes('error'))) return;
+    const q = new URLSearchParams(h.slice(1));
+    history.replaceState(null, '', location.pathname + location.search);
+    if (!q.get('access_token')) { toast("Sign-in didn't finish. Please try again from Settings."); return; }
+    try {
+      const access_token = q.get('access_token');
+      const r = await fetch(SB_URL + '/auth/v1/user', { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + access_token } });
+      const user = await r.json();
+      await afterSignIn({ access_token, refresh_token: q.get('refresh_token'), expires_in: q.get('expires_in'), user }, store.get('oldGuest', null));
+      store.set('oldGuest', null);
+      toast('Signed in! Progress is saved.');
+    } catch (e) { toast("Sign-in didn't finish. Please try again from Settings."); }
+  }
+  function renderAccount() {
+    const status = $('acctStatus'), btn = $('acctBtn');
+    if (backend === 'claude') {
+      status.textContent = 'Saving to an account works on the game’s website: bilzz1326.github.io/starlight';
+      btn.hidden = true; return;
+    }
+    btn.hidden = false;
+    if (isAccount()) { status.textContent = `Saved to ${sb.session.email}. Continue on any device.`; btn.textContent = 'Account'; }
+    else { status.textContent = 'Progress is saved on this device only. A grown-up can sign in to keep it safe.'; btn.textContent = 'Save my progress'; }
+  }
+  let gateAnswer = 0, codeEmail = '';
+  function acctStep(step) {
+    for (const id of ['acctGate', 'acctChoose', 'acctCode', 'acctDone']) $(id).hidden = id !== step;
+    $('acctTitle').textContent = step === 'acctDone' ? 'Progress saved' : step === 'acctGate' ? 'For grown-ups' : 'Save progress';
+  }
+  function openAccount() {
+    for (const id of ['gateMsg', 'chooseMsg', 'codeMsg', 'doneMsg']) $(id).textContent = '';
+    if (isAccount()) { $('doneEmail').textContent = sb.session.email; acctStep('acctDone'); }
+    else {
+      const a = Math.floor(rand(6, 10)), b = Math.floor(rand(3, 10));
+      gateAnswer = a * b; $('gateQ').textContent = `${a} × ${b}`; $('gateA').value = '';
+      acctStep('acctGate');
+    }
+    openFrom('account', 'settings');
+  }
+  const validEmail = s => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(s);
+  $('acctBtn').addEventListener('click', e => { e.stopPropagation(); openAccount(); });
+  $('acctClose').addEventListener('click', e => { e.stopPropagation(); renderAccount(); back(); });
+  $('gateGo').addEventListener('click', e => {
+    e.stopPropagation();
+    if (parseInt($('gateA').value, 10) === gateAnswer) acctStep('acctChoose');
+    else $('gateMsg').textContent = 'Not quite. Ask a grown-up to help.';
+  });
+  $('googleBtn').addEventListener('click', e => { e.stopPropagation(); $('chooseMsg').textContent = 'Opening Google...'; googleSignIn(); });
+  $('sendCodeBtn').addEventListener('click', async e => {
+    e.stopPropagation();
+    const email = $('acctEmail').value.trim().toLowerCase();
+    if (!validEmail(email)) { $('chooseMsg').textContent = 'Please type a full email address, like name@example.com.'; return; }
+    $('sendCodeBtn').disabled = true; $('chooseMsg').textContent = 'Sending...';
+    try {
+      await sb.call('/auth/v1/otp', { method: 'POST', body: JSON.stringify({ email, create_user: true }) });
+      codeEmail = email; $('codeEmail').textContent = email; $('acctCodeIn').value = '';
+      acctStep('acctCode');
+    } catch (err) {
+      $('chooseMsg').textContent = err.status === 429 ? 'Too many codes were sent just now. Please wait a few minutes and try again.' : err.status ? "We couldn't send a code to that email. Check it and try again." : "Can't reach the internet right now. Try again soon.";
+    }
+    $('sendCodeBtn').disabled = false;
+  });
+  $('verifyBtn').addEventListener('click', async e => {
+    e.stopPropagation();
+    const token = $('acctCodeIn').value.replace(/\D/g, '');
+    if (token.length !== 6) { $('codeMsg').textContent = 'The code has 6 numbers.'; return; }
+    $('verifyBtn').disabled = true; $('codeMsg').textContent = 'Checking...';
+    try {
+      const oldGuest = await guestSnapshot();
+      const fresh = await sb.call('/auth/v1/verify', { method: 'POST', body: JSON.stringify({ type: 'email', email: codeEmail, token }) });
+      await afterSignIn(fresh, oldGuest);
+      $('doneEmail').textContent = sb.session.email; $('doneMsg').textContent = 'All set! Your progress is saved.';
+      acctStep('acctDone'); fanfare();
+    } catch (err) {
+      $('codeMsg').textContent = err.status ? "That code didn't work. Check it, or ask for a new one." : "Can't reach the internet right now. Try again soon.";
+    }
+    $('verifyBtn').disabled = false;
+  });
+  $('codeBack').addEventListener('click', e => { e.stopPropagation(); acctStep('acctChoose'); });
+  $('signOutBtn').addEventListener('click', async e => {
+    e.stopPropagation();
+    try { await sb.call('/auth/v1/logout', { method: 'POST', body: '{}' }, true); } catch (err) {}
+    sb.session = null; store.set('sb', null); myId = null; lastSent = '';
+    renderAccount(); renderBoard();
+    $('doneMsg').textContent = '';
+    back();
+    toast('Signed out. Progress stays on this device.');
+  });
+
+  // ---------- nickname picker: kids build their own safe name ----------
+  let pickA = '', pickB = '', pickNum = '';
+  function renderNickPick() {
+    $('nickPreview').textContent = `${pickA} ${pickB} ${pickNum}`;
+    const fill = (el, list, cur, set) => {
+      el.textContent = '';
+      for (const w of list) {
+        const b = document.createElement('button'); b.type = 'button'; b.textContent = w;
+        b.setAttribute('aria-pressed', String(w === cur));
+        b.addEventListener('click', e => { e.stopPropagation(); set(w); renderNickPick(); });
+        el.appendChild(b);
+      }
+    };
+    fill($('nickA'), NICK_A, pickA, w => { pickA = w; });
+    fill($('nickB'), NICK_B, pickB, w => { pickB = w; });
+  }
+  $('nickBtn').addEventListener('click', e => {
+    e.stopPropagation();
+    const parts = nickOk(nick) ? nick.split(' ') : newNick().split(' ');
+    [pickA, pickB, pickNum] = parts;
+    renderNickPick(); openFrom('nickPick', 'board');
+  });
+  $('nickNum').addEventListener('click', e => { e.stopPropagation(); pickNum = String(Math.floor(rand(10, 100))); renderNickPick(); });
+  $('nickCancel').addEventListener('click', e => { e.stopPropagation(); back(); });
+  $('nickSave').addEventListener('click', e => {
+    e.stopPropagation();
+    const n = `${pickA} ${pickB} ${pickNum}`;
+    if (nickOk(n)) { nick = n; save(); submitScore(); pushCloud(); }
+    renderBoard(); back();
+  });
   async function loadBoardSb() {
     if (backend !== 'supabase') return;
     try {
@@ -955,6 +1234,9 @@ button:disabled { cursor: default; opacity: .45; }
   async function initOnline() {
     if (!window.claude || typeof window.claude.use !== 'function') {
       backend = 'supabase'; canWrite = true; myId = sb.session && sb.session.uid;
+      renderAccount();
+      await handleOAuthReturn();
+      if (isAccount()) { try { mergeProgress(await pullCloud()); } catch (e) {} }
       await loadBoardSb();
       return;
     }
@@ -1033,18 +1315,17 @@ button:disabled { cursor: default; opacity: .45; }
   }
   $('boardExplorer').addEventListener('click', e => { e.stopPropagation(); boardTab = 'explorer'; renderBoard(); });
   $('boardChallenge').addEventListener('click', e => { e.stopPropagation(); boardTab = 'challenge'; renderBoard(); });
-  $('nickBtn').addEventListener('click', e => { e.stopPropagation(); nick = newNick(); save(); renderBoard(); submitScore(); });
 
   // ---------- panels ----------
-  const PANELS = ['menu', 'chapters', 'missions', 'closet', 'settings', 'pause', 'quiz', 'over', 'log', 'board'];
-  let returnTo = 'menu';
+  const PANELS = ['menu', 'chapters', 'missions', 'closet', 'settings', 'pause', 'quiz', 'over', 'log', 'board', 'nickPick', 'account'];
+  let navStack = []; // the screens to go back through, so nested screens return to the right place
   const openPanel = () => PANELS.find(id => !$(id).hidden) || null;
   function showOnly(id) {
     for (const o of PANELS) $(o).hidden = o !== id;
     $('pauseBtn').hidden = !(state === 'play' && !id);
   }
-  function openFrom(id, from) { returnTo = from; showOnly(id); }
-  const back = () => showOnly(returnTo || 'menu');
+  function openFrom(id, from) { navStack.push(from); showOnly(id); }
+  const back = () => showOnly(navStack.pop() || 'menu');
 
   function renderMenu() {
     ensureDaily();
@@ -1110,7 +1391,7 @@ button:disabled { cursor: default; opacity: .45; }
   $('missionsClose').addEventListener('click', e => { e.stopPropagation(); back(); });
   $('closetBtn').addEventListener('click', e => { e.stopPropagation(); renderCloset(); openFrom('closet', 'menu'); });
   $('closetClose').addEventListener('click', e => { e.stopPropagation(); back(); });
-  $('settingsBtn').addEventListener('click', e => { e.stopPropagation(); renderMenu(); openFrom('settings', 'menu'); });
+  $('settingsBtn').addEventListener('click', e => { e.stopPropagation(); renderMenu(); renderAccount(); openFrom('settings', 'menu'); });
   $('settingsDone').addEventListener('click', e => { e.stopPropagation(); back(); });
   $('chBack').addEventListener('click', e => { e.stopPropagation(); showOnly('menu'); });
   $('modeExplorer').addEventListener('click', e => { e.stopPropagation(); mode = 'explorer'; renderMenu(); save(); });
@@ -1284,7 +1565,7 @@ button:disabled { cursor: default; opacity: .45; }
 
   function startGame() {
     if (chapterSel > unlocked) return;
-    hush();
+    hush(); navStack = [];
     reset(CHAPTERS[chapterSel].start);
     state = 'play'; userPaused = false;
     showOnly(null);
@@ -1294,7 +1575,7 @@ button:disabled { cursor: default; opacity: .45; }
   }
 
   function toMenu() {
-    hush(); hideTip();
+    hush(); hideTip(); navStack = [];
     state = 'menu'; userPaused = false;
     reset(0);
     $('fact').hidden = true;
@@ -1322,6 +1603,7 @@ button:disabled { cursor: default; opacity: .45; }
   }
   stage.addEventListener('pointerdown', e => { if (!e.target.closest('button, .panel')) onTap(); });
   addEventListener('keydown', e => {
+    if (e.target.closest && e.target.closest('input, textarea')) return; // typing an email or code
     if (e.code === 'Escape' || e.code === 'KeyP') { if (state === 'play') setPaused(!userPaused); return; }
     if (e.code !== 'Space' && e.code !== 'Enter') return;
     if (e.target.closest && e.target.closest('button')) return;
@@ -1447,6 +1729,7 @@ button:disabled { cursor: default; opacity: .45; }
     save();
     bump('runBest', path.length - 1, true);
     submitScore();
+    pushCloud();
     $('cname').textContent = path.length > 1 ? `The ${pick(ADJ)} ${pick(NOUN)}` : 'A single spark';
     $('reason').textContent = loseReason === 'lost' ? `Lumi drifted into the dark past ${cur.d.n}.` : `Lumi's light went out near ${cur.d.n}.`;
     $('finalScore').textContent = score;
