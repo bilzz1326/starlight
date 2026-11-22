@@ -1,5 +1,9 @@
 # Starlight
 
+### ▶ [Play Starlight now](https://bilzz1326.github.io/starlight/)
+
+Free in your browser, on phone, tablet or computer. Nothing to install.
+
 A one-tap space adventure for kids. Help **Lumi**, a little spark of sunlight, wake up the sleepy planets on a journey from the Sun to the Andromeda Galaxy. Every world Lumi reaches lights up and shares a real fun fact.
 
 ## Play
