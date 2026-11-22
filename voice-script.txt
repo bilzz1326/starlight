@@ -1,0 +1,63 @@
+STARLIGHT - NARRATION SCRIPT FOR RECORDED VOICE
+================================================
+
+How to use:
+1. In ElevenLabs (or a similar voice tool), pick one warm, friendly voice and use it for every line.
+2. Generate each line below and download it as an MP3.
+3. Save each file with the exact file name shown, inside a folder called "voice"
+   next to index.html:   D:\my Docs\starlight\voice\the-sun.mp3   (and so on)
+4. The game plays the recording when a player taps "Listen". If a file is missing,
+   it falls back to the device's built-in voice, so you can add files a few at a time.
+
+Tip: speak slowly and warmly, like reading to a 6-year-old. Leave a short pause after the name.
+
+FILE NAME                      | LINE TO RECORD
+-------------------------------|--------------------------------------------------------------
+the-sun.mp3                    | The Sun. The Sun is so big that about 1.3 million Earths could fit inside it!
+mercury.mp3                    | Mercury. Mercury zooms around the Sun faster than any other planet. Its whole year is only 88 days!
+venus.mp3                      | Venus. Venus is the hottest planet. It is hot enough to melt metal, even hotter than Mercury!
+earth.mp3                      | Earth. That is home! Earth is the only planet we know where plants, animals and people live.
+the-moon.mp3                   | The Moon. Astronauts' footprints on the Moon can last for millions of years, because there is no wind to blow them away.
+mars.mp3                       | Mars. Mars is red because its dirt is full of rust. It also has the biggest volcano in the solar system!
+phobos.mp3                     | Phobos. Phobos is a tiny moon shaped like a potato. It is slowly falling toward Mars!
+ceres.mp3                      | Ceres. Ceres is the biggest rock in the asteroid belt. It is so big that it is called a dwarf planet.
+jupiter.mp3                    | Jupiter. Jupiter is the biggest planet. More than 1,000 Earths could fit inside it!
+io.mp3                         | Io. Io is covered in volcanoes that shoot lava fountains high above the ground. It looks like a giant pizza!
+europa.mp3                     | Europa. Europa has a hidden ocean under its ice. Scientists wonder if something could live there!
+ganymede.mp3                   | Ganymede. Ganymede is the biggest moon in the solar system. It is even bigger than the planet Mercury!
+saturn.mp3                     | Saturn. Saturn's rings are made of billions of chunks of ice. Saturn is so light it could float in a giant bathtub!
+titan.mp3                      | Titan. It rains on Titan, but not water! Its rain and lakes are made of liquid methane.
+enceladus.mp3                  | Enceladus. Enceladus sprays giant fountains of icy water out into space, like a space geyser!
+uranus.mp3                     | Uranus. Uranus spins on its side, so it rolls around the Sun like a bowling ball!
+neptune.mp3                    | Neptune. Neptune has the strongest winds of any planet. They blow faster than a jet plane!
+triton.mp3                     | Triton. Triton is one of the coldest places we know. It has geysers that shoot out frozen gas!
+pluto.mp3                      | Pluto. Pluto has a giant heart shape made of ice! One year on Pluto lasts 248 Earth years.
+charon.mp3                     | Charon. Charon and Pluto always face each other as they spin, like two dancers holding hands.
+arrokoth.mp3                   | Arrokoth. Arrokoth looks like a snowman! It is the farthest object a spacecraft has ever visited up close.
+halley-s-comet.mp3             | Halley's Comet. Halley's Comet comes back every 76 years. Its next visit is in 2061. How old will you be?
+voyager-1.mp3                  | Voyager 1. Voyager 1 was launched in 1977. It is the farthest thing from Earth that people have ever built!
+proxima-centauri.mp3           | Proxima Centauri. Proxima Centauri is the closest star to our Sun. Its light takes more than 4 years to reach us!
+barnard-s-star.mp3             | Barnard's Star. Barnard's Star is a small red star that moves across our sky faster than any other star.
+sirius.mp3                     | Sirius. Sirius is the brightest star in the night sky. People call it the Dog Star!
+polaris.mp3                    | Polaris. Polaris is the North Star. For hundreds of years, sailors used it to find their way.
+betelgeuse.mp3                 | Betelgeuse. Betelgeuse is a giant red star. If it sat where our Sun is, it would swallow Mars!
+the-pleiades.mp3               | The Pleiades. The Pleiades are a family of young stars called the Seven Sisters. You can spot them on a dark night!
+orion-nebula.mp3               | Orion Nebula. The Orion Nebula is a giant cloud where baby stars are being born right now!
+crab-nebula.mp3                | Crab Nebula. The Crab Nebula is what was left after a star exploded. People saw the explosion almost 1,000 years ago!
+crab-pulsar.mp3                | Crab Pulsar. This tiny dead star spins 30 times every second. A spoonful of it would weigh as much as a mountain!
+sagittarius-a.mp3              | Sagittarius A star. In the middle of our galaxy is a giant black hole. It is 4 million times heavier than our Sun!
+large-magellanic-cloud.mp3     | Large Magellanic Cloud. The Large Magellanic Cloud is a small galaxy that travels around our own Milky Way.
+andromeda-galaxy.mp3           | Andromeda Galaxy. Andromeda is one of the farthest things you can see without a telescope. Its light left it 2.5 million years ago!
+
+Deep space (optional - played after Andromeda)
+rogue-planet.mp3               | Rogue planet. Some planets have no sun at all. They wander alone through the dark!
+brown-dwarf.mp3                | Brown dwarf. A brown dwarf is too big to be a planet, but too small to shine like a star.
+twin-stars.mp3                 | Twin stars. Many stars come in pairs that circle each other, like dancing partners!
+exoplanet.mp3                  | Exoplanet. Scientists have found more than 6,000 planets around other stars. Maybe one has life!
+white-dwarf.mp3                | White dwarf. A white dwarf is the glowing leftover core of a star like our Sun. It is only about as big as Earth!
+lava-world.mp3                 | Lava world. Some planets are so close to their star that their ground may be covered in lava!
+quasar.mp3                     | Quasar. Quasars are some of the brightest things in the universe, powered by giant black holes.
+ringed-exoplanet.mp3           | Ringed exoplanet. Scientists think one faraway planet may have rings much bigger than Saturn's!
+water-world.mp3                | Water world. Some planets may be covered by one giant ocean, with no land at all!
+magnetar.mp3                   | Magnetar. Magnetars are the strongest magnets in the whole universe!
+distant-galaxy.mp3             | Distant galaxy. There are hundreds of billions of galaxies in the universe, maybe even more!
